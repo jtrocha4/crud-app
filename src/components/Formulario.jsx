@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import React, {useState } from 'react'
+import {db} from '../firebase';
+import {collection, addDoc, deleteDoc, doc, onSnapshot, updateDoc} from 'firebase/firestore';
 
 function Formulario() {
 
@@ -11,10 +13,47 @@ function Formulario() {
     const [telefono, setTelefono] = useState("")
     const [pais, setPais] = useState("")
 
+    const guardarUsuarios= async(e) =>{
+        e.preventDefault()
+        try {
+            const data = await addDoc(collection(db,"usuarios"),{
+                primerNombre:primerNombre,
+                primerApellido:primerApellido,
+                segundoApellido:segundoApellido,
+                fechaNacimiento:fechaNacimiento,
+                correo:correo,
+                telefono:telefono,
+                pais:pais
+            })
+
+            setUsuarios([
+                ...usuarios,
+                {primerNombre:primerNombre,
+                    primerApellido:primerApellido,
+                    segundoApellido:segundoApellido,
+                    fechaNacimiento:fechaNacimiento,
+                    correo:correo,
+                    telefono:telefono,
+                    pais:pais}
+            ])
+
+            setPrimerNombre("")
+            setPrimerApellido("")
+            setSegundoApellido("")
+            setFechaNacimiento("")
+            setCorreo("")
+            setTelefono("")
+            setPais("")
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     return (
         <div className='container'>
             <h4>Agregar usuarios</h4>
-            <form onSubmit="">
+            <form onSubmit={guardarUsuarios}>
                 <div className="mb-3">
                     <label htmlFor="" className='form-label'>Primer Nombre</label>
                     <input type="text" className='form-control' value={primerNombre} onChange={(e) => setPrimerNombre(e.target.value)} />
@@ -45,7 +84,7 @@ function Formulario() {
                 </div>
 
                 <div className='d-grid gap-2 d-md-flex justify-content-md-end'>
-                    <button className='btn btn-primary' type='button'>Agregar</button>
+                    <button className='btn btn-primary' type='submit'>Agregar</button>
                 </div>
 
             </form>
