@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { db } from '../firebase';
 import { collection, addDoc, deleteDoc, doc, onSnapshot, updateDoc, query } from 'firebase/firestore';
 import { async } from '@firebase/util';
@@ -15,18 +15,17 @@ function Formulario() {
     const [pais, setPais] = useState("")
 
     useEffect(() => {
-        const obtenerDatos =async()=>{
+        const obtenerDatos = async () => {
             try {
-                await onSnapshot(collection(db,"usuarios"), query=>{
-                    setUsuarios(query.docs.map((doc)=>({...doc.data(), id:doc.id})))
+                await onSnapshot(collection(db, "usuarios"), query => {
+                    setUsuarios(query.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
                 })
             } catch (error) {
                 console.log(error)
             }
         }
         obtenerDatos()
-    },[])
-    
+    }, [])
 
     const guardarUsuarios = async (e) => {
         e.preventDefault()
@@ -61,7 +60,16 @@ function Formulario() {
             setCorreo("")
             setTelefono("")
             setPais("")
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
+
+    //Arreglar eliminar
+    const eliminarUsuario = async (id) => {
+        try {
+            await deleteDoc(doc(db, "usuarios", id))
         } catch (error) {
             console.log(error)
         }
@@ -109,25 +117,36 @@ function Formulario() {
             <div className='mt-3'>
                 <h4>Lista de usuarios</h4>
                 <div className="row">
-                {
-                    usuarios.map((element) => (
-                        <div className="col col-auto col-sm-4 col-md-3" key={element.telefono}>
-                            <div className="card text-bg-dark mb-3">
-                                <img className='card-img-top' src={element.image} height="200px"></img>
-                                <div className='card-body'>
-                                    <h5 className='card-title'>{element.primerNombre} {element.primerApellido} {element.segundoApellido}</h5>
-                                    <ul className='card-text list-unstyled'>
-                                        <li>
-                                            {element.fechaNacimiento} {element.pais}
-                                        </li>
-                                        <li>{element.correo}</li>
-                                        <li>{element.telefono}</li>
-                                    </ul>
+                    {
+                        usuarios.map((element) => (
+                            <div className="col col-auto col-sm-auto col-md-4" key={element.telefono}>
+                                <div className="card mb-3">
+                                    <div className='d-grid gap-1 d-md-flex justify-content-md-end'>
+                                        <button className='btn btn-warning' type='button'>Editar</button>
+                                        <button className='btn btn-danger' type='button' onClick={() => eliminarUsuario(element.id)}>Eliminar</button>
+                                    </div>
+                                    <img className='card-img-top' src={`https://picsum.photos/450`} height="200px"></img>
+                                    <div className='card-body'>
+                                        <h5 className='card-title'>{element.primerNombre} {element.primerApellido} {element.segundoApellido}</h5>
+                                        <ul className='card-text list-unstyled'>
+                                            <li>
+                                                <i className='bi bi-calendar-event'> {element.fechaNacimiento}</i>
+                                            </li>
+                                            <li>
+                                                <i className='bi bi-geo'> {element.pais}</i>
+                                            </li>
+                                            <li>
+                                                <i className='bi bi-envelope'> {element.correo}</i>
+                                            </li>
+                                            <li>
+                                                <i className='bi bi-telephone'> {element.telefono}</i>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))
-                }
+                        ))
+                    }
                 </div>
             </div>
 
