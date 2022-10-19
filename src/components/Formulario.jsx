@@ -1,6 +1,7 @@
-import React, {useState } from 'react'
-import {db} from '../firebase';
-import {collection, addDoc, deleteDoc, doc, onSnapshot, updateDoc} from 'firebase/firestore';
+import React, { useState,useEffect } from 'react'
+import { db } from '../firebase';
+import { collection, addDoc, deleteDoc, doc, onSnapshot, updateDoc, query } from 'firebase/firestore';
+import { async } from '@firebase/util';
 
 function Formulario() {
 
@@ -13,28 +14,44 @@ function Formulario() {
     const [telefono, setTelefono] = useState("")
     const [pais, setPais] = useState("")
 
-    const guardarUsuarios= async(e) =>{
+    useEffect(() => {
+        const obtenerDatos =async()=>{
+            try {
+                await onSnapshot(collection(db,"usuarios"), query=>{
+                    setUsuarios(query.docs.map((doc)=>({...doc.data(), id:doc.id})))
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        obtenerDatos()
+    },[])
+    
+
+    const guardarUsuarios = async (e) => {
         e.preventDefault()
         try {
-            const data = await addDoc(collection(db,"usuarios"),{
-                primerNombre:primerNombre,
-                primerApellido:primerApellido,
-                segundoApellido:segundoApellido,
-                fechaNacimiento:fechaNacimiento,
-                correo:correo,
-                telefono:telefono,
-                pais:pais
+            const data = await addDoc(collection(db, "usuarios"), {
+                primerNombre: primerNombre,
+                primerApellido: primerApellido,
+                segundoApellido: segundoApellido,
+                fechaNacimiento: fechaNacimiento,
+                correo: correo,
+                telefono: telefono,
+                pais: pais
             })
 
             setUsuarios([
                 ...usuarios,
-                {primerNombre:primerNombre,
-                    primerApellido:primerApellido,
-                    segundoApellido:segundoApellido,
-                    fechaNacimiento:fechaNacimiento,
-                    correo:correo,
-                    telefono:telefono,
-                    pais:pais}
+                {
+                    primerNombre: primerNombre,
+                    primerApellido: primerApellido,
+                    segundoApellido: segundoApellido,
+                    fechaNacimiento: fechaNacimiento,
+                    correo: correo,
+                    telefono: telefono,
+                    pais: pais
+                }
             ])
 
             setPrimerNombre("")
@@ -89,8 +106,29 @@ function Formulario() {
 
             </form>
 
-            <div>
+            <div className='mt-3'>
                 <h4>Lista de usuarios</h4>
+                <div className="row">
+                {
+                    usuarios.map((element) => (
+                        <div className="col col-auto col-sm-4 col-md-3" key={element.telefono}>
+                            <div className="card text-bg-dark mb-3">
+                                <img className='card-img-top' src={element.image} height="200px"></img>
+                                <div className='card-body'>
+                                    <h5 className='card-title'>{element.primerNombre} {element.primerApellido} {element.segundoApellido}</h5>
+                                    <ul className='card-text list-unstyled'>
+                                        <li>
+                                            {element.fechaNacimiento} {element.pais}
+                                        </li>
+                                        <li>{element.correo}</li>
+                                        <li>{element.telefono}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                }
+                </div>
             </div>
 
         </div>
