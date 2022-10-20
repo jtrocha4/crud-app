@@ -16,6 +16,9 @@ function Formulario() {
     const [modoEdicion, setModoEdicion] = useState(false)
     const [id, setId] = useState("")
 
+    const [error, setError] = useState(null)
+    const [exito, setExito] = useState(null)
+
     useEffect(() => {
         const obtenerDatos = async () => {
             try {
@@ -31,6 +34,59 @@ function Formulario() {
 
     const guardarUsuarios = async (e) => {
         e.preventDefault()
+
+        if (!primerNombre.trim()) {
+            setError("Por favor ingrese su primer nombre")
+            console.log("Por favor ingrese su primer nombre")
+            return
+        }
+        if (!primerApellido.trim()) {
+            setError("Por favor ingrese su primer apellido")
+            console.log("Por favor ingrese su primer apellido")
+            return
+        }
+        //validacion que los nombres no contengan numeros
+        const valoresNumericos = /[0-9]/
+        if (primerNombre.match(valoresNumericos)) {
+            setError("No se aceptan valores numericos en el primer nombre")
+            return
+        }
+        if (primerApellido.match(valoresNumericos)) {
+            setError("No se aceptan valores numericos en el primer apellido")
+            return
+        }
+        if (segundoApellido.match(valoresNumericos)) {
+            setError("No se aceptan valores numericos en el segundo apellido")
+            return
+        }
+        //Termina validacion de que los nombres no contengan numeros 
+
+        if (!segundoApellido.trim()) {
+            setError("Por favor ingrese su segundo apellido")
+            console.log("Por favor ingrese su segundo apellido")
+            return
+        }
+        if (!fechaNacimiento.trim()) {
+            setError("Por favor ingrese su fecha de nacimiento")
+            console.log("Por favor ingrese su fecha de nacimiento")
+            return
+        }
+        if (!correo.trim()) {
+            setError("Por favor ingrese su correo electronico")
+            console.log("Por favor ingrese su correo electronico")
+            return
+        }
+        if (!telefono.trim()) {
+            setError("Por favor ingrese su numero de telefono")
+            console.log("Por favor ingrese su numero de telefono")
+            return
+        }
+        if (!pais.trim()) {
+            setError("Por favor ingrese su pais de origen")
+            console.log("Por favor ingrese su pais de origen")
+            return
+        }
+
         try {
             const data = await addDoc(collection(db, "usuarios"), {
                 primerNombre: primerNombre,
@@ -52,7 +108,7 @@ function Formulario() {
                     correo: correo,
                     telefono: telefono,
                     pais: pais,
-                    id:data.id
+                    id: data.id
                 }
             ])
 
@@ -63,6 +119,13 @@ function Formulario() {
             setCorreo("")
             setTelefono("")
             setPais("")
+            setExito("El usuario ha sido agregado correctamente")
+
+            setTimeout(() => {
+                setExito(null)
+            }, 3000);
+
+            setError(null)
         } catch (error) {
             console.log(error)
         }
@@ -102,6 +165,59 @@ function Formulario() {
 
     const EditarUsuarios = async (e) => {
         e.preventDefault()
+
+        if (!primerNombre.trim()) {
+            setError("Por favor ingrese su primer nombre")
+            console.log("Por favor ingrese su primer nombre")
+            return
+        }
+        if (!primerApellido.trim()) {
+            setError("Por favor ingrese su primer apellido")
+            console.log("Por favor ingrese su primer apellido")
+            return
+        }
+        //validacion que los nombres no contengan numeros
+        const valoresNumericos = /[0-9]/
+        if (primerNombre.match(valoresNumericos)) {
+            setError("No se aceptan valores numericos en el primer nombre")
+            return
+        }
+        if (primerApellido.match(valoresNumericos)) {
+            setError("No se aceptan valores numericos en el primer apellido")
+            return
+        }
+        if (segundoApellido.match(valoresNumericos)) {
+            setError("No se aceptan valores numericos en el segundo apellido")
+            return
+        }
+        //Termina validacion de que los nombres no contengan numeros 
+
+        if (!segundoApellido.trim()) {
+            setError("Por favor ingrese su segundo apellido")
+            console.log("Por favor ingrese su segundo apellido")
+            return
+        }
+        if (!fechaNacimiento.trim()) {
+            setError("Por favor ingrese su fecha de nacimiento")
+            console.log("Por favor ingrese su fecha de nacimiento")
+            return
+        }
+        if (!correo.trim()) {
+            setError("Por favor ingrese su correo electronico")
+            console.log("Por favor ingrese su correo electronico")
+            return
+        }
+        if (!telefono.trim()) {
+            setError("Por favor ingrese su numero de telefono")
+            console.log("Por favor ingrese su numero de telefono")
+            return
+        }
+        if (!pais.trim()) {
+            setError("Por favor ingrese su pais de origen")
+            console.log("Por favor ingrese su pais de origen")
+            return
+        }
+
         try {
             const docRef = doc(db, "usuarios", id)
             await updateDoc(docRef, {
@@ -115,10 +231,10 @@ function Formulario() {
             })
 
             const nuevaLista = usuarios.map(
-                (element) => 
+                (element) =>
                     element.id === id ?
                         {
-                            id:id,
+                            id: id,
                             primerNombre: primerNombre,
                             primerApellido: primerApellido,
                             segundoApellido: segundoApellido,
@@ -127,7 +243,7 @@ function Formulario() {
                             telefono: telefono,
                             pais: pais,
                         } : element
-                
+
             )
 
             setUsuarios(nuevaLista)
@@ -138,7 +254,14 @@ function Formulario() {
             setCorreo("")
             setTelefono("")
             setPais("")
-            setId("")
+            setExito("El usuario ha sido editado correctamente")
+
+            setTimeout(() => {
+                setExito(null)
+            }, 3000);
+
+            setError(null)
+
             setModoEdicion(false)
         } catch (error) {
             console.log(error)
@@ -154,6 +277,14 @@ function Formulario() {
                 }
             </h4>
             <form onSubmit={modoEdicion ? EditarUsuarios : guardarUsuarios}>
+
+                {
+                    error != null ? (<div className='alert alert-danger' role="alert"><i className='bi bi-exclamation-triangle'> {error}</i></div>) : null
+                }
+                {
+                    exito != null ? (<div className='alert alert-success' role="alert"><i className='bi bi-check-circle'></i> {exito}</div>) : null
+                }
+
                 <div className="mb-3">
                     <label htmlFor="" className='form-label'>Primer Nombre</label>
                     <input type="text" className='form-control' value={primerNombre} onChange={(e) => setPrimerNombre(e.target.value)} />
@@ -168,15 +299,15 @@ function Formulario() {
                 </div>
                 <div className="mb-3">
                     <label htmlFor="" className='form-label'>Fecha de nacimiento</label>
-                    <input type="text" className='form-control' value={fechaNacimiento} onChange={(e) => setFechaNacimiento(e.target.value)} />
+                    <input type="date" className='form-control' value={fechaNacimiento} onChange={(e) => setFechaNacimiento(e.target.value)} />
                 </div>
                 <div className="mb-3">
                     <label htmlFor="" className='form-label'>Correo electronico</label>
-                    <input type="text" className='form-control' value={correo} onChange={(e) => setCorreo(e.target.value)} />
+                    <input type="email" className='form-control' value={correo} onChange={(e) => setCorreo(e.target.value)} />
                 </div>
                 <div className="mb-3">
                     <label htmlFor="" className='form-label'>Numero de telefono</label>
-                    <input type="text" className='form-control' value={telefono} onChange={(e) => setTelefono(e.target.value)} />
+                    <input type="number" className='form-control' value={telefono} onChange={(e) => setTelefono(e.target.value)} />
                 </div>
                 <div className="mb-3">
                     <label htmlFor="" className='form-label'>Pais</label>
