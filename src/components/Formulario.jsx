@@ -13,6 +13,8 @@ function Formulario() {
     const [correo, setCorreo] = useState("")
     const [telefono, setTelefono] = useState("")
     const [pais, setPais] = useState("")
+    const [modoEdicion, setModoEdicion] = useState(false)
+    const [id, setId] = useState("")
 
     useEffect(() => {
         const obtenerDatos = async () => {
@@ -49,7 +51,8 @@ function Formulario() {
                     fechaNacimiento: fechaNacimiento,
                     correo: correo,
                     telefono: telefono,
-                    pais: pais
+                    pais: pais,
+                    id:data.id
                 }
             ])
 
@@ -65,8 +68,6 @@ function Formulario() {
         }
     }
 
-
-    //Arreglar eliminar
     const eliminarUsuario = async (id) => {
         try {
             await deleteDoc(doc(db, "usuarios", id))
@@ -75,10 +76,84 @@ function Formulario() {
         }
     }
 
+    const editar = (element) => {
+        setPrimerNombre(element.primerNombre)
+        setPrimerApellido(element.primerApellido)
+        setSegundoApellido(element.segundoApellido)
+        setFechaNacimiento(element.fechaNacimiento)
+        setCorreo(element.correo)
+        setTelefono(element.telefono)
+        setPais(element.pais)
+        setModoEdicion(true)
+        setId(element.id)
+    }
+
+    const cancelar = () => {
+        setModoEdicion(false)
+        setPrimerNombre("")
+        setPrimerApellido("")
+        setSegundoApellido("")
+        setFechaNacimiento("")
+        setCorreo("")
+        setTelefono("")
+        setPais("")
+        setId("")
+    }
+
+    const EditarUsuarios = async (e) => {
+        e.preventDefault()
+        try {
+            const docRef = doc(db, "usuarios", id)
+            await updateDoc(docRef, {
+                primerNombre: primerNombre,
+                primerApellido: primerApellido,
+                segundoApellido: segundoApellido,
+                fechaNacimiento: fechaNacimiento,
+                correo: correo,
+                telefono: telefono,
+                pais: pais
+            })
+
+            const nuevaLista = usuarios.map(
+                (element) => 
+                    element.id === id ?
+                        {
+                            id:id,
+                            primerNombre: primerNombre,
+                            primerApellido: primerApellido,
+                            segundoApellido: segundoApellido,
+                            fechaNacimiento: fechaNacimiento,
+                            correo: correo,
+                            telefono: telefono,
+                            pais: pais,
+                        } : element
+                
+            )
+
+            setUsuarios(nuevaLista)
+            setPrimerNombre("")
+            setPrimerApellido("")
+            setSegundoApellido("")
+            setFechaNacimiento("")
+            setCorreo("")
+            setTelefono("")
+            setPais("")
+            setId("")
+            setModoEdicion(false)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
     return (
         <div className='container'>
-            <h4>Agregar usuarios</h4>
-            <form onSubmit={guardarUsuarios}>
+            <h4>
+                {
+                    modoEdicion ? "Editar usuario" : "Agregar usuario"
+                }
+            </h4>
+            <form onSubmit={modoEdicion ? EditarUsuarios : guardarUsuarios}>
                 <div className="mb-3">
                     <label htmlFor="" className='form-label'>Primer Nombre</label>
                     <input type="text" className='form-control' value={primerNombre} onChange={(e) => setPrimerNombre(e.target.value)} />
@@ -109,7 +184,15 @@ function Formulario() {
                 </div>
 
                 <div className='d-grid gap-2 d-md-flex justify-content-md-end'>
-                    <button className='btn btn-primary' type='submit'>Agregar</button>
+
+                    {
+                        modoEdicion ? (
+                            <><button className='btn btn-info' type='submit'>Editar</button>
+                                <button className='btn btn-danger' type='submit' onClick={() => cancelar()}>Cancelar</button></>
+                        ) : (
+                            <button className='btn btn-primary' type='submit'>Agregar</button>
+                        )
+                    }
                 </div>
 
             </form>
@@ -122,7 +205,7 @@ function Formulario() {
                             <div className="col col-auto col-sm-auto col-md-4" key={element.telefono}>
                                 <div className="card mb-3">
                                     <div className='d-grid gap-1 d-md-flex justify-content-md-end'>
-                                        <button className='btn btn-warning' type='button'>Editar</button>
+                                        <button className='btn btn-warning' type='button' onClick={() => editar(element)}>Editar</button>
                                         <button className='btn btn-danger' type='button' onClick={() => eliminarUsuario(element.id)}>Eliminar</button>
                                     </div>
                                     <img className='card-img-top' src={`https://picsum.photos/450`} height="200px"></img>
