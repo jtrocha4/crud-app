@@ -19,6 +19,8 @@ function Formulario() {
     const [error, setError] = useState(null)
     const [exito, setExito] = useState(null)
 
+    const [img, setImg] = useState(null)
+
     useEffect(() => {
         const obtenerDatos = async () => {
             try {
@@ -31,6 +33,13 @@ function Formulario() {
         }
         obtenerDatos()
     }, [])
+    
+    //Obtencion de imagenes al momento de agregar un usuario
+    const url=`https://picsum.photos/id/${img}/450`
+    const numAletorio =()=>{
+        const img =Math.floor(Math.random() * 100);
+        setImg(img)
+    }
 
     const guardarUsuarios = async (e) => {
         e.preventDefault()
@@ -113,7 +122,8 @@ function Formulario() {
                 fechaNacimiento: fechaNacimiento,
                 correo: correo,
                 telefono: telefono,
-                pais: pais
+                pais: pais,
+                img:url
             })
 
             setUsuarios([
@@ -126,7 +136,8 @@ function Formulario() {
                     correo: correo,
                     telefono: telefono,
                     pais: pais,
-                    id: data.id
+                    id: data.id,
+                    img:url
                 }
             ])
 
@@ -265,7 +276,8 @@ function Formulario() {
                 fechaNacimiento: fechaNacimiento,
                 correo: correo,
                 telefono: telefono,
-                pais: pais
+                pais: pais,
+                img:url
             })
 
             const nuevaLista = usuarios.map(
@@ -280,6 +292,7 @@ function Formulario() {
                             correo: correo,
                             telefono: telefono,
                             pais: pais,
+                            img:url
                         } : element
 
             )
@@ -358,10 +371,10 @@ function Formulario() {
 
                         {
                             modoEdicion ? (
-                                <><button className='btn btn-info' type='submit'>Editar</button>
+                                <><button className='btn btn-info' type='submit' onClick={numAletorio}>Editar</button>
                                     <button className='btn btn-danger' type='submit' onClick={() => cancelar()}>Cancelar</button></>
                             ) : (
-                                <button className='btn btn-primary' type='submit'>Agregar</button>
+                                <button className='btn btn-primary' type='submit' onClick={numAletorio}>Agregar</button>
                             )
                         }
                     </div>
@@ -374,13 +387,13 @@ function Formulario() {
                 <div className="row">
                     {
                         usuarios.map((element) => (
-                            <div className="col col-auto col-sm-auto col-md-4" key={element.telefono}>
+                            <div className="col col-auto col-sm-auto col-md-4" key={element.correo}>
                                 <div className="card mb-3">
                                     <div className='d-grid gap-1 d-md-flex justify-content-md-end'>
                                         <button className='btn btn-warning' type='button' onClick={() => editar(element)}>Editar</button>
                                         <button className='btn btn-danger' type='button' onClick={() => eliminarUsuario(element.id)}>Eliminar</button>
                                     </div>
-                                    <img className='card-img-top' src={`https://picsum.photos/450`} height="200px"></img>
+                                    <img className='card-img-top' src={element.img} height="200px"></img>
                                     <div className='card-body'>
                                         <h5 className='card-title'>{element.primerNombre} {element.primerApellido} {element.segundoApellido}</h5>
                                         <ul className='card-text list-unstyled'>
