@@ -115,7 +115,7 @@ function Formulario() {
         }
 
         //
-        
+
 
         try {
             const data = await addDoc(collection(db, "usuarios"), {
@@ -385,6 +385,7 @@ function Formulario() {
                 </form>
             </div>
 
+            <hr />
             <div className='mt-3'>
                 <h4>Lista de usuarios</h4>
                 <div className="row">
