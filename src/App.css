@@ -1,0 +1,10 @@
+/* body{
+    background-color: ghostwhite;
+} */
+
+#titulo{
+    background-color: black;
+    color: white;
+    padding: 1%;
+    text-shadow: 1px 1px white;
+}

@@ -33,20 +33,20 @@ function Formulario() {
         }
         obtenerDatos()
     }, [])
-    
+
     //Obtencion de imagenes al momento de agregar un usuario
-    const url=`https://picsum.photos/id/${img}/450`
-    const numAletorio =()=>{
-        const img =Math.floor(Math.random() * 100);
+    const url = `https://picsum.photos/id/${img}/450`
+    const numAletorio = () => {
+        const img = Math.floor(Math.random() * 100);
         setImg(img)
     }
 
     const guardarUsuarios = async (e) => {
         e.preventDefault()
 
-        const numTelefono= /^\d{7,14}$/
-        const nombre= /^[a-zA-ZÀ-ÿ\s]{1,40}$/
-        const correoElectronico= /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
+        const numTelefono = /^\d{7,14}$/
+        const nombre = /^[a-zA-ZÀ-ÿ\s]{1,40}$/
+        const correoElectronico = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
 
         if (!primerNombre.trim()) {
             setError("Por favor ingrese su primer nombre")
@@ -114,6 +114,9 @@ function Formulario() {
             return
         }
 
+        //
+        
+
         try {
             const data = await addDoc(collection(db, "usuarios"), {
                 primerNombre: primerNombre,
@@ -123,7 +126,7 @@ function Formulario() {
                 correo: correo,
                 telefono: telefono,
                 pais: pais,
-                img:url
+                img: url
             })
 
             setUsuarios([
@@ -137,7 +140,7 @@ function Formulario() {
                     telefono: telefono,
                     pais: pais,
                     id: data.id,
-                    img:url
+                    img: url
                 }
             ])
 
@@ -197,9 +200,9 @@ function Formulario() {
     const EditarUsuarios = async (e) => {
         e.preventDefault()
 
-        const numTelefono= /^\d{7,14}$/
-        const nombre= /^[a-zA-ZÀ-ÿ\s]{1,40}$/
-        const correoElectronico= /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
+        const numTelefono = /^\d{7,14}$/
+        const nombre = /^[a-zA-ZÀ-ÿ\s]{1,40}$/
+        const correoElectronico = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
 
         if (!primerNombre.trim()) {
             setError("Por favor ingrese su primer nombre")
@@ -277,7 +280,7 @@ function Formulario() {
                 correo: correo,
                 telefono: telefono,
                 pais: pais,
-                img:url
+                img: url
             })
 
             const nuevaLista = usuarios.map(
@@ -292,7 +295,7 @@ function Formulario() {
                             correo: correo,
                             telefono: telefono,
                             pais: pais,
-                            img:url
+                            img: url
                         } : element
 
             )
@@ -389,14 +392,14 @@ function Formulario() {
                         usuarios.map((element) => (
                             <div className="col col-auto col-sm-auto col-md-4" key={element.correo}>
                                 <div className="card mb-3">
-                                    <div className='d-grid gap-1 d-md-flex justify-content-md-end'>
+                                    <div className='d-grid gap-1 d-md-flex justify-content-md-end my-2 me-1'>
                                         <button className='btn btn-warning' type='button' onClick={() => editar(element)}>Editar</button>
                                         <button className='btn btn-danger' type='button' onClick={() => eliminarUsuario(element.id)}>Eliminar</button>
                                     </div>
                                     <img className='card-img-top' src={element.img} height="200px"></img>
                                     <div className='card-body'>
                                         <h5 className='card-title'>{element.primerNombre} {element.primerApellido} {element.segundoApellido}</h5>
-                                        <ul className='card-text list-unstyled'>
+                                        <ul className='card-text mb-3 list-unstyled'>
                                             <li>
                                                 <i className='bi bi-calendar-event'> {element.fechaNacimiento}</i>
                                             </li>
